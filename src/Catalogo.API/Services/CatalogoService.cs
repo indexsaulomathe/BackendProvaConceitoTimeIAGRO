@@ -22,7 +22,6 @@ namespace Catalogo.API
 
             try
             {
-                Console.WriteLine($"Reading JSON from file: {jsonFilePath}");
                 var jsonString = File.ReadAllText(jsonFilePath);
 
                 catalog = JsonSerializer.Deserialize<List<Book>>(jsonString);

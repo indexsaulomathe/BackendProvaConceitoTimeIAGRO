@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.0" />
-    <ProjectReference Include="../Catologo.API/Catalogo.API.csproj" />
+    <ProjectReference Include="../Catalogo.API/Catalogo.API.csproj" />
   </ItemGroup>
 
 </Project>
