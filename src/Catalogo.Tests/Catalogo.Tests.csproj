@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-       <PackageReference Include="Microsoft.AspNetCore.Mvc" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.0" />
+    <ProjectReference Include="../Catologo.API/Catalogo.API.csproj" />
   </ItemGroup>
 
 </Project>

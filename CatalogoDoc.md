@@ -45,3 +45,23 @@ dotnet run
 Se desejar testar os endpoints disponíveis, há um arquivo chamado rest.http na pasta /resClient/. Esse arquivo contém rotas montadas que podem ser testadas diretamente no Visual Studio Code com a extensão REST Client.
 
 VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+
+
+3. Rodar os testes
+   3.1. Rodar a Catalogo.Tests
+   Abra no terminal na pasta /src/Catalogo.Tests.
+
+```bash
+cd src/Catalogo.Tests
+```
+
+Em seguida, execute os seguintes comandos:
+
+```bash
+dotnet restore
+dotnet build
+dotnet run
+
+
+

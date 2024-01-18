@@ -18,17 +18,14 @@ namespace Catalogo.API.Converters
 
             if (token.Type == JTokenType.Array)
             {
-                // Se for uma matriz, converte para uma lista de strings
                 return token.ToObject<List<string>>();
             }
             else if (token.Type == JTokenType.String)
             {
-                // Se for uma string, cria uma lista de strings com um único elemento
                 string singleIllustrator = token.ToObject<string>();
                 return new List<string> { singleIllustrator };
             }
 
-            // Se não for nem uma matriz nem uma string, lança uma exceção
             throw new JsonSerializationException("Unexpected token type for Illustrator");
         }
 
@@ -37,12 +34,10 @@ namespace Catalogo.API.Converters
             List<string> list = (List<string>)value;
             if (list.Count == 1)
             {
-                // If there's only one item in the list, write it as a single string
                 writer.WriteValue(list[0]);
             }
             else
             {
-                // Otherwise, write the list as a JSON array
                 writer.WriteStartArray();
                 foreach (var item in list)
                 {

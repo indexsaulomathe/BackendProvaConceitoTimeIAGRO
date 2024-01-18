@@ -26,7 +26,6 @@ namespace Catalogo.API
         }
         catch (Exception ex)
         {
-            // Trate a exceção ou lance uma exceção personalizada conforme necessário
             throw new ApplicationException("Erro ao carregar o catálogo.", ex);
         }
     }
