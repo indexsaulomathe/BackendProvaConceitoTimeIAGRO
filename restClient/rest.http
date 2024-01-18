@@ -1,0 +1,22 @@
+# Obter todos os livros
+GET http://localhost:5000/api/catalogo/all-books
+
+###
+
+# Buscar livros por termo
+GET http://localhost:5000/api/catalogo/search?searchTerm=Journey
+
+###
+
+# Ordenar livros por preço (ascendente)
+GET http://localhost:5000/api/catalogo/sort?ascending=true
+
+###
+
+# Ordenar livros por preço (descendente)
+GET http://localhost:5000/api/catalogo/sort?ascending=false
+
+###
+
+# Calcular frete para um livro
+GET http://localhost:5000/api/catalogo/shipping-cost?bookPrice=10
