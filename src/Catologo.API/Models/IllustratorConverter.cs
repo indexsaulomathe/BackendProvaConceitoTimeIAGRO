@@ -1,84 +1,72 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Catalogo.API.Converters
 {
-    public class IllustratorConverter : JsonConverter
+    public class IllustratorConverter : JsonConverter<List<string>>
     {
-        public override bool CanConvert(Type objectType)
+        public override List<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return objectType == typeof(List<string>);
+            using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
+            {
+                if (doc.RootElement.ValueKind == JsonValueKind.String)
+                {
+                    string singleIllustrator = doc.RootElement.GetString();
+                    return new List<string> { singleIllustrator };
+                }
+                else if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                {
+                    return JsonSerializer.Deserialize<List<string>>(doc.RootElement.GetRawText(), options);
+                }
+
+                throw new JsonException("Unexpected token type for Illustrator");
+            }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, List<string> value, JsonSerializerOptions options)
         {
-            JToken token = JToken.Load(reader);
-
-            if (token.Type == JTokenType.Array)
+            if (value.Count == 1)
             {
-                return token.ToObject<List<string>>();
-            }
-            else if (token.Type == JTokenType.String)
-            {
-                string singleIllustrator = token.ToObject<string>();
-                return new List<string> { singleIllustrator };
-            }
-
-            throw new JsonSerializationException("Unexpected token type for Illustrator");
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            List<string> list = (List<string>)value;
-            if (list.Count == 1)
-            {
-                writer.WriteValue(list[0]);
+                writer.WriteStringValue(value[0]);
             }
             else
             {
-                writer.WriteStartArray();
-                foreach (var item in list)
-                {
-                    writer.WriteValue(item);
-                }
-                writer.WriteEndArray();
+                JsonSerializer.Serialize(writer, value, options);
             }
         }
     }
-}
 
-public class GenresConverter : JsonConverter
-{
-    public override bool CanConvert(Type objectType)
+    public class GenresConverter : JsonConverter<List<string>>
     {
-        return (objectType == typeof(List<string>));
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        switch (reader.TokenType)
+        public override List<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            case JsonToken.String:
-                return new List<string> { serializer.Deserialize<string>(reader) };
-            case JsonToken.StartArray:
-                return serializer.Deserialize<List<string>>(reader);
-            default:
-                throw new JsonSerializationException("Expected string or array");
+            using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
+            {
+                if (doc.RootElement.ValueKind == JsonValueKind.String)
+                {
+                    return new List<string> { doc.RootElement.GetString() };
+                }
+                else if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                {
+                    return JsonSerializer.Deserialize<List<string>>(doc.RootElement.GetRawText(), options);
+                }
+
+                throw new JsonException("Unexpected token type for Genres");
+            }
         }
-    }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        List<string> list = (List<string>)value;
-        if (list.Count == 1)
+        public override void Write(Utf8JsonWriter writer, List<string> value, JsonSerializerOptions options)
         {
-            serializer.Serialize(writer, list[0]);
-        }
-        else
-        {
-            serializer.Serialize(writer, list);
+            if (value.Count == 1)
+            {
+                writer.WriteStringValue(value[0]);
+            }
+            else
+            {
+                JsonSerializer.Serialize(writer, value, options);
+            }
         }
     }
 }

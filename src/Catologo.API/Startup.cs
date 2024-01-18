@@ -16,29 +16,15 @@ namespace Catalogo.API.Startup
             Configuration = configuration;
         }
 
-        // Configuração de serviços
         public void ConfigureServices(IServiceCollection services)
         {
-            // Obtenha o caminho do arquivo JSON da configuração
-            var jsonFilePath = Configuration["JsonFilePath"];
-
-            // Adicione o serviço CatalogoService com a string para o caminho do arquivo JSON
-            services.AddScoped(provider => new CatalogoService(jsonFilePath));
-
+            ConfigureJsonService(services);
             services.AddControllers();
         }
 
-        // Configuração da pipeline de solicitação
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
+            ConfigureEnvironment(app, env);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -50,6 +36,24 @@ namespace Catalogo.API.Startup
                     name: "default",
                     pattern: "{controller=Catalogo}/{action=GetAllBooks}/{id?}");
             });
+        }
+
+        private void ConfigureJsonService(IServiceCollection services)
+        {
+            var jsonFilePath = Configuration["JsonFilePath"];
+            services.AddScoped<CatalogoService>(provider => new CatalogoService(jsonFilePath));
+        }
+
+        private void ConfigureEnvironment(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts();
+            }
         }
     }
 }
