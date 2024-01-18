@@ -1,17 +1,34 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using Catalogo.API.Models;
 
-public class CatalogService
+
+namespace Catalogo.API
+{
+   public class CatalogoService
 {
     private readonly List<Book> catalog;
 
-    public CatalogService(string jsonFilePath)
+    public CatalogoService(string jsonFilePath)
     {
-        var jsonString = File.ReadAllText(jsonFilePath);
-        catalog = JsonSerializer.Deserialize<List<Book>>(jsonString);
+        if (string.IsNullOrEmpty(jsonFilePath))
+        {
+            throw new ArgumentException("O caminho do arquivo JSON não pode ser nulo ou vazio.", nameof(jsonFilePath));
+        }
+
+        try
+        {
+            var jsonString = File.ReadAllText(jsonFilePath);
+            catalog = JsonConvert.DeserializeObject<List<Book>>(jsonString);
+        }
+        catch (Exception ex)
+        {
+            // Trate a exceção ou lance uma exceção personalizada conforme necessário
+            throw new ApplicationException("Erro ao carregar o catálogo.", ex);
+        }
     }
 
     public IEnumerable<Book> GetAllBooks()
@@ -21,7 +38,16 @@ public class CatalogService
 
     public IEnumerable<Book> SearchBooks(string searchTerm)
     {
-        return catalog.Where(book => book.Title.Contains(searchTerm) || book.Specifications.Author.Contains(searchTerm));
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            return Enumerable.Empty<Book>();
+        }
+
+        searchTerm = searchTerm.ToLowerInvariant();
+
+        return catalog.Where(book =>
+            book.Name.ToLowerInvariant().Contains(searchTerm) ||
+            book.Specifications.Author.ToLowerInvariant().Contains(searchTerm));
     }
 
     public IEnumerable<Book> SortByPrice(bool ascending)
@@ -34,4 +60,5 @@ public class CatalogService
         const decimal ShippingRate = 0.2m;
         return bookPrice * ShippingRate;
     }
+}
 }

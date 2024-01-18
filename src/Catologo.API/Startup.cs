@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Catalogo.API;
 
 namespace Catalogo.API.Startup
 {
@@ -18,8 +19,13 @@ namespace Catalogo.API.Startup
         // Configuração de serviços
         public void ConfigureServices(IServiceCollection services)
         {
-            // Adicione serviços necessários aqui
-            // Exemplo: services.AddMvc();
+            // Obtenha o caminho do arquivo JSON da configuração
+            var jsonFilePath = Configuration["JsonFilePath"];
+
+            // Adicione o serviço CatalogoService com a string para o caminho do arquivo JSON
+            services.AddScoped(provider => new CatalogoService(jsonFilePath));
+
+            services.AddControllers();
         }
 
         // Configuração da pipeline de solicitação
@@ -31,22 +37,18 @@ namespace Catalogo.API.Startup
             }
             else
             {
-                // Configurações para ambientes de produção
-                // Exemplo: app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
-            // Configurações comuns, independentemente do ambiente
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Catalogo}/{action=GetAllBooks}/{id?}");
             });
         }
     }

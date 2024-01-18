@@ -1,41 +1,43 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Catalogo.API.Models;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CatalogoController : ControllerBase
+
+namespace Catalogo.API.Controllers
 {
-    private readonly CatalogService catalogService;
-
-    public CatalogoController(CatalogService catalogService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CatalogoController : ControllerBase
     {
-        this.catalogService = catalogService;
-    }
+        private readonly CatalogoService catalogoService;
 
-    [HttpGet("books")]
-    public IActionResult GetAllBooks()
-    {
-        var books = catalogService.GetAllBooks();
-        return Ok(books);
-    }
+        public CatalogoController(CatalogoService catalogoService)
+        {
+            this.catalogoService = catalogoService;
+        }
 
-    [HttpGet("search")]
-    public IActionResult SearchBooks(string searchTerm)
-    {
-        var books = catalogService.SearchBooks(searchTerm);
-        return Ok(books);
-    }
+        [HttpGet("all-books")]
+        public IEnumerable<Book> GetAllBooks()
+        {
+            return catalogoService.GetAllBooks();
+        }
 
-    [HttpGet("sort")]
-    public IActionResult SortBooks(bool ascending)
-    {
-        var books = catalogService.SortByPrice(ascending);
-        return Ok(books);
-    }
+        [HttpGet("search")]
+        public IEnumerable<Book> SearchBooks([FromQuery] string searchTerm)
+        {
+            return catalogoService.SearchBooks(searchTerm);
+        }
 
-    [HttpGet("shipping")]
-    public IActionResult CalculateShipping(decimal bookPrice)
-    {
-        var shippingCost = catalogService.CalculateShippingCost(bookPrice);
-        return Ok(shippingCost);
+        [HttpGet("sort")]
+        public IEnumerable<Book> SortBooks([FromQuery] bool ascending = true)
+        {
+            return catalogoService.SortByPrice(ascending);
+        }
+
+        [HttpGet("shipping-cost")]
+        public decimal CalculateShippingCost([FromQuery] decimal bookPrice)
+        {
+            return catalogoService.CalculateShippingCost(bookPrice);
+        }
     }
 }
